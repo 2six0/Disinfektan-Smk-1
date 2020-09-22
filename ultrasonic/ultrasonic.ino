@@ -1,35 +1,39 @@
-#define infra 7
-#define echoPin 5 //Echo Pin
-#define trigPin 6 //Trigger Pin
-const int relay_1 = 2;
 
-int maximumRange = 200; //kebutuhan akan maksimal range
-int minimumRange = 00; //kebutuhan akan minimal range
-long duration, distance;
+#define echoPin 2 // attach pin D2 Arduino to pin Echo of HC-SR04
+#define trigPin 3 //attach pin D3 Arduino to pin Trig of HC-SR04
+int relay = 6;
+// defines variables
+long duration; // variable for the duration of sound wave travel
+int distance; // variable for the distance measurement
 
 void setup() {
-  Serial.begin(9600);
-  pinMode(infra, INPUT);
-  pinMode(relay_1, OUTPUT);
-
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
+  pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
+  pinMode(relay,OUTPUT);
+  Serial.begin(9600); // // Serial Communication is starting with 9600 of baudrate speed
+  Serial.println("Ultrasonic Sensor HC-SR04 Test"); // print some text in Serial Monitor
+  Serial.println("with Arduino UNO R3");
 }
-
 void loop() {
-  digitalWrite(trigPin, LOW); delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH); delayMicroseconds(10);
+
   digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
   duration = pulseIn(echoPin, HIGH);
 
-  //perhitungan untuk dijadikan jarak
-  distance = duration / 58.2;
-
-  if(distance >= maximumRange || distance <= minimumRange){
-    digitalWrite(relay_1,LOW);
+  distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
+  if(distance <= 10 && distance >= 0){
+    digitalWrite(relay,LOW);
   }
-  else {
-    digitalWrite(relay_1,HIGH);
+  else{
+    digitalWrite(relay,HIGH);
   }
-  Serial.println(distance);
+  
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
 }
